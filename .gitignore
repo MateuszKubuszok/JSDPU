@@ -1,0 +1,11 @@
+/.gradle/
+/.metadata/
+/settings/
+/Dist/
+/Servers/
+.settings/
+.svn/
+bin/
+obj/
+.classpath
+.project
