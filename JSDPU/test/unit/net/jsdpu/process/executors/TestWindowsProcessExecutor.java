@@ -16,7 +16,6 @@
 package net.jsdpu.process.executors;
 
 import static java.util.Arrays.asList;
-import static net.jsdpu.process.executors.Commands.convertSingleCommand;
 import static net.jsdpu.process.executors.MultiCaller.prepareCommand;
 import static net.jsdpu.resources.Resources.getUACHandlerPath;
 import static org.fest.assertions.api.Assertions.*;
@@ -29,34 +28,43 @@ import java.util.List;
 import org.junit.Test;
 
 public class TestWindowsProcessExecutor {
-    @Test
-    public void testRootCommand() {
-        try {
-            // given
-            WindowsProcessExecutor executor = new WindowsProcessExecutor();
-            List<String[]> command = new ArrayList<String[]>();
-            command.add((String[]) asList("java", "-jar", "Some Installer.jar").toArray());
-            Method rootCommand = executor.getClass().getDeclaredMethod("rootCommand", List.class);
-            rootCommand.setAccessible(true);
+	@Test
+	public void testRootCommand() {
+		try {
+			// given
+			WindowsProcessExecutor executor = new WindowsProcessExecutor();
+			List<String[]> command = new ArrayList<String[]>();
+			command.add((String[]) asList("java", "-jar", "Some Installer.jar")
+					.toArray());
+			Method rootCommand = executor.getClass().getDeclaredMethod(
+					"rootCommand", List.class);
+			rootCommand.setAccessible(true);
 
-            // when
-            List<String[]> result = (List<String[]>) rootCommand.invoke(executor, command);
+			// when
+			List<String[]> result = (List<String[]>) rootCommand.invoke(
+					executor, command);
 
-            // then
-            assertThat(result).as("rootCommand() should return root command").isNotNull()
-                    .hasSize(1);
-            assertThat(result.get(0)).as("rootCommand() should return correct root command")
-                    .isNotNull().isEqualTo(rootCommand(command));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            fail("No exception should be thrown");
-        }
-    }
+			// then
+			assertThat(result).as("rootCommand() should return root command")
+					.isNotNull().hasSize(1);
+			assertThat(result.get(0))
+					.as("rootCommand() should return correct root command")
+					.isNotNull().isEqualTo(rootCommand(command).get(0));
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException
+				| SecurityException e) {
+			fail("No exception should be thrown");
+		}
+	}
 
-    private String[] rootCommand(List<String[]> commands) {
-        List<String> command = new ArrayList<String>();
-        command.add(getUACHandlerPath());
-        command.addAll(asList(prepareCommand(commands)));
-        return convertSingleCommand(command).get(0);
-    }
+	private List<String[]> rootCommand(List<String[]> commands) {
+		if (new WindowsProcessExecutor().isVistaOrLater()) {
+			String uacHandlerPath = getUACHandlerPath();
+			List<String> command = new ArrayList<String>();
+			command.add(uacHandlerPath);
+			command.addAll(asList(prepareCommand(commands)));
+			return Commands.convertSingleCommand(command);
+		}
+		return commands;
+	}
 }
