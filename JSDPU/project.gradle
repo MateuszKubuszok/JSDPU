@@ -12,6 +12,7 @@ sourceSets {
         resources { srcDir 'resources' }
     }
     test { java {
+        srcDir 'test/functional'
         srcDir 'test/unit'
     } }
 }
