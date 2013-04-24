@@ -19,7 +19,8 @@ import static java.lang.Integer.valueOf;
 import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
 import static net.jsdpu.logger.Logger.getLogger;
-import static net.jsdpu.process.executors.Commands.*;
+import static net.jsdpu.logger.LoggerUtils.listToString;
+import static net.jsdpu.process.executors.Commands.convertSingleCommand;
 import static net.jsdpu.process.executors.MultiCaller.prepareCommand;
 import static net.jsdpu.resources.Resources.*;
 
@@ -48,7 +49,7 @@ public class WindowsProcessExecutor extends AbstractProcessExecutor {
 
     @Override
     protected List<String[]> rootCommand(List<String[]> commands) {
-        logger.trace("Preparing root command for: " + commands);
+        logger.trace("Preparing root command for: " + listToString(commands));
         if (isVistaOrLater()) {
             logger.config("Executing process with UAC handling (Vista+)");
             String uacHandlerPath = getUACHandlerPath();
@@ -59,7 +60,7 @@ public class WindowsProcessExecutor extends AbstractProcessExecutor {
             return convertSingleCommand(command);
         }
         logger.config("Executing process without UAC handling (prior to Vista)");
-        logger.detailedTrace("Root command: " + commands);
+        logger.detailedTrace("Root command: " + listToString(commands));
         return commands;
     }
 
