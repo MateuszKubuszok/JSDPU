@@ -7,8 +7,12 @@ import static net.jsdpu.logger.Logger.getLogger;
 import static net.jsdpu.process.executors.Commands.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -114,8 +118,19 @@ public class MultiCaller {
      * @return path to MultiCaller
      */
     private static String getPath() {
-        return (path != null) ? path : (path = MultiCaller.class.getResource(
-                MultiCaller.class.getSimpleName() + ".class").toString());
+        if (path == null) {
+            URL classUrl = MultiCaller.class.getResource(MultiCaller.class.getSimpleName()
+                    + ".class");
+            try {
+                logger.detailedTrace("Calculates path to MultiCaller.class");
+                String tmpPath = URLDecoder.decode(classUrl.toString(), "utf-8");
+                path = new File(tmpPath).getAbsolutePath();
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        logger.debug("Returns path to MultiCaller.class: " + path);
+        return path;
     }
 
     /**
@@ -140,14 +155,16 @@ public class MultiCaller {
     private static String getClassPath() {
         if (classPath == null) {
             if (runAsJar()) {
-                System.out.println("classpath: " + getPath());
+                logger.debug("MultiCaller classpath: " + getPath());
                 Matcher matcher = compile("jar:(file:/)?([^!]+)!.+").matcher(getPath());
                 if (!matcher.find())
-                    throw new RuntimeException("Invalid class path");
+                    throw new IllegalStateException("Invalid class path");
                 classPath = matcher.group(2);
-                System.out.println("new classpath: " + classPath);
-            } else
+                logger.detailedTrace("MultiCaller returned classpath: " + classPath);
+            } else {
+                logger.debug("MultiCaller calculated classpath: " + classPath);
                 classPath = getProperty("java.class.path", null);
+            }
         }
         return classPath;
     }
