@@ -1,4 +1,4 @@
-Java's System Dependant Process Utils.
+Java's System Dependent Process Utils.
 ===========
 
 Project of a library dedicated to performing some specific operations on
