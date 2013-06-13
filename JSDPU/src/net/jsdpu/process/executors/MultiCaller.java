@@ -1,23 +1,20 @@
 package net.jsdpu.process.executors;
 
-import static java.io.File.separator;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.System.*;
-import static java.util.regex.Pattern.compile;
+import static net.jsdpu.JavaSystemUtils.createCommandToRunMain;
 import static net.jsdpu.logger.Logger.getLogger;
 import static net.jsdpu.process.executors.Commands.*;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import net.jsdpu.logger.Logger;
+
+import com.google.common.base.Function;
 
 /**
  * Class used to replace multiple commands calls with one.
@@ -29,10 +26,6 @@ import net.jsdpu.logger.Logger;
  */
 public class MultiCaller {
     private static final Logger logger = getLogger(MultiCaller.class);
-
-    private static String java;
-    private static String path;
-    private static String classPath;
 
     /**
      * Generates command that will allow to run multiple commands through
@@ -49,15 +42,15 @@ public class MultiCaller {
      */
     static String[] prepareCommand(List<String[]> commands) {
         logger.trace("Preparation of MultiCaller run: " + commands);
-        List<String> command = new ArrayList<String>();
-        command.add(getJava());
-        command.add("-cp");
-        command.add(getClassPath());
-        command.add(MultiCaller.class.getName());
-        for (String[] subCommand : commands)
-            command.add(wrapArgument(joinArguments(subCommand)));
+        List<String> arguments = newArrayList(transform(commands, new Function<String[], String>() {
+            @Override
+            public String apply(String[] subCommand) {
+                return wrapArgument(joinArguments(subCommand));
+            }
+        }));
+        String[] command = createCommandToRunMain(MultiCaller.class, arguments);
         logger.detailedTrace("MultiCaller command: " + command);
-        return command.toArray(new String[0]);
+        return command;
     }
 
     /**
@@ -95,77 +88,5 @@ public class MultiCaller {
         } catch (InvalidCommandException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Obtains path to JVN.
-     * 
-     * @return path to JVM
-     */
-    private static String getJava() {
-        if (java == null) {
-            java = System.getProperty("java.home");
-            if (java.endsWith("/") || java.endsWith("\\"))
-                java = java.substring(0, java.length() - 2);
-            java += separator + "bin" + separator + "java";
-        }
-        return java;
-    }
-
-    /**
-     * Obtains path to MultiCaller class in ClassPath.
-     * 
-     * @return path to MultiCaller
-     */
-    private static String getPath() {
-        if (path == null) {
-            URL classUrl = MultiCaller.class.getResource(MultiCaller.class.getSimpleName()
-                    + ".class");
-            try {
-                logger.detailedTrace("Calculates path to MultiCaller.class");
-                String tmpPath = URLDecoder.decode(classUrl.toString(), "utf-8");
-                path = new File(tmpPath).getAbsolutePath();
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        logger.debug("Returns path to MultiCaller.class: " + path);
-        return path;
-    }
-
-    /**
-     * Finds out whether MultiCaller should be run as JAR or from byte code.
-     * 
-     * @return true if class is run from JAR, false otherwise
-     */
-    private static boolean runAsJar() {
-        return getPath().startsWith("jar:");
-    }
-
-    /**
-     * Returns ClassPath that will be needed to run main(String[]) method.
-     * 
-     * <p>
-     * Automatically resolves whether MultiCaller should be run from JAR or
-     * directly from byte code.
-     * </p>
-     * 
-     * @return ClassPath
-     */
-    private static String getClassPath() {
-        if (classPath == null) {
-            if (runAsJar()) {
-                logger.debug("MultiCaller classpath: " + getPath());
-                Matcher matcher = compile("jar:(file:/)?([^!]+)!.+").matcher(getPath());
-                if (!matcher.find())
-                    throw new IllegalStateException("Invalid class path");
-                classPath = matcher.group(2);
-                logger.detailedTrace("MultiCaller returned classpath: " + classPath);
-            } else {
-                logger.debug("MultiCaller calculated classpath: " + classPath);
-                classPath = getProperty("java.class.path", null);
-            }
-        }
-        return classPath;
     }
 }
