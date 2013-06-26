@@ -31,7 +31,7 @@ import java.util.List;
  * @see net.jsdpu.process.killers.MacOSProcessKiller
  * @see net.jsdpu.process.killers.WindowsProcessKiller
  * 
- * @see net.jsdpu.EOperatingSystem#getProcessKiller()
+ * @see net.jsdpu.IOperatingSystem#getProcessKiller()
  */
 public interface IProcessExecutor {
     /**

@@ -43,7 +43,7 @@ import net.jsdpu.logger.Logger;
  * @see net.jsdpu.process.executors.MacOSProcessExecutor
  * @see net.jsdpu.process.executors.WindowsProcessExecutor
  * 
- * @see net.jsdpu.EOperatingSystem#getProcessExecutor()
+ * @see net.jsdpu.IOperatingSystem#getProcessExecutor()
  */
 public abstract class AbstractProcessExecutor implements IProcessExecutor {
     private static final Logger logger = getLogger(AbstractProcessExecutor.class);

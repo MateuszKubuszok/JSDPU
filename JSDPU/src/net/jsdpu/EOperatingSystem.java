@@ -29,10 +29,10 @@ import net.jsdpu.process.killers.WindowsProcessKiller;
  * Defines currently used operating system, as well as classes performing some
  * system-dependent operations.
  * 
- * @see net.jsdpu.process.executors.AbstractProcessExecutor
+ * @see net.jsdpu.process.executors.IProcessExecutor
  * @see net.jsdpu.process.killers.IProcessKiller
  */
-public enum EOperatingSystem {
+public enum EOperatingSystem implements IOperatingSystem {
     /**
      * Defines system dependent instances used on Windows family systems.
      * 
@@ -106,55 +106,27 @@ public enum EOperatingSystem {
         this.testCommand = testCommand;
     }
 
-    /**
-     * Returns family name for current operating system.
-     * 
-     * @return family name
-     */
+    @Override
     public String getFamilyName() {
         return familyName;
     }
 
-    /**
-     * Returns path to local application data.
-     * 
-     * @return path to local application data
-     */
+    @Override
     public String getLocalAppData() {
         return localAppData;
     }
 
-    /**
-     * Returns instance of ProcessExecutor suitable for current system.
-     * 
-     * @see net.jsdpu.process.executors.IProcessExecutor
-     * 
-     * @return ProcessExecutor
-     */
+    @Override
     public IProcessExecutor getProcessExecutor() {
         return processExecutor;
     }
 
-    /**
-     * Returns instance of ProcessKiller suitable for current system.
-     * 
-     * @see net.jsdpu.process.killers.IProcessKiller
-     * 
-     * @return ProcessKiller
-     */
+    @Override
     public IProcessKiller getProcessKiller() {
         return processKiller;
     }
 
-    /**
-     * Command that tests whether or not Executor works.
-     * 
-     * <p>
-     * Since available commands are system-dependent it has to be defined here.
-     * </p>
-     * 
-     * @return commands that tests executor under given system
-     */
+    @Override
     public String getTestCommand() {
         return testCommand;
     }

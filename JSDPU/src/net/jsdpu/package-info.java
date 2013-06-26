@@ -26,6 +26,7 @@
  * </p>
  * 
  * @see net.jsdpu.EOperatingSystem
+ * @see net.jsdpu.IOperatingSystem
  * @see net.jsdpu.JavaSystemUtils
  * @see net.jsdpu.SystemOperationException
  */

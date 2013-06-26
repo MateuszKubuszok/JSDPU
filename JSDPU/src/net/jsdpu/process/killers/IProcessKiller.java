@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see net.jsdpu.process.killers.MacOSProcessKiller
  * @see net.jsdpu.process.killers.WindowsProcessKiller
  * 
- * @see net.jsdpu.EOperatingSystem#getProcessKiller()
+ * @see net.jsdpu.IOperatingSystem#getProcessKiller()
  */
 public interface IProcessKiller {
     /**
