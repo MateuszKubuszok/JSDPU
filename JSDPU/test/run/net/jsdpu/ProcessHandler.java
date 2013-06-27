@@ -34,7 +34,7 @@ import net.jsdpu.process.killers.ProcessKillerException;
  * Class made for testing various library's abilities in action.
  */
 public class ProcessHandler {
-    final static IOperatingSystem operatingSystem = EOperatingSystem.current();
+    final static IOperatingSystem operatingSystem = EOperatingSystem.currentOperatingSystem();
     final static IProcessExecutor processExecutor = operatingSystem.getProcessExecutor();
     final static IProcessKiller processKiller = operatingSystem.getProcessKiller();
     private static ExecutionQueueReader resultReader;

@@ -141,7 +141,7 @@ public enum EOperatingSystem implements IOperatingSystem {
      * 
      * @return current operating system
      */
-    public static EOperatingSystem current() {
+    public static EOperatingSystem currentOperatingSystem() {
         return current;
     }
 }

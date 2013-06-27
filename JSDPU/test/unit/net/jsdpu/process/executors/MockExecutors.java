@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.mockito.Mockito;
 
-public class Mocks {
+public class MockExecutors {
     private static AbstractProcessExecutor abstractProcessExecutor;
     private static List<String[]> mockCommands;
     private static List<String[]> mockRootCommands;

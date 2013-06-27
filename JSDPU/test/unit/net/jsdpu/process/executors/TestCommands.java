@@ -15,76 +15,65 @@
  */
 package net.jsdpu.process.executors;
 
-import static org.fest.assertions.api.Assertions.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static net.jsdpu.process.executors.Commands.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
 public class TestCommands {
     @Test
-    public void testConvertSingleConsoleCommand() {
-        try {
-            // given
-            String command = "java -jar  \"Some Installer.jar\"";
+    public void testConvertSingleConsoleCommand() throws InvalidCommandException {
+        // given
+        String command = "java -jar  \"Some Installer.jar\"";
 
-            // when
-            String[] result = Commands.convertSingleConsoleCommand(command);
+        // when
+        String[] result = convertSingleConsoleCommand(command);
 
-            // then
-            assertThat(result)
-                    .as("convertSingleConsoleCommand(String[]) should properly split command")
-                    .isNotNull().hasSize(3);
-            assertThat(result[0])
-                    .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
-                    .isNotNull().isEqualTo("java");
-            assertThat(result[1])
-                    .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
-                    .isNotNull().isEqualTo("-jar");
-            assertThat(result[2])
-                    .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
-                    .isNotNull().isEqualTo("Some Installer.jar");
-        } catch (InvalidCommandException e) {
-            fail("No exception should be thrown, when command defined properly");
-        }
+        // then
+        assertThat(result)
+                .as("convertSingleConsoleCommand(String[]) should properly split command")
+                .isNotNull().hasSize(3);
+        assertThat(result[0])
+                .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
+                .isNotNull().isEqualTo("java");
+        assertThat(result[1])
+                .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
+                .isNotNull().isEqualTo("-jar");
+        assertThat(result[2])
+                .as("convertSingleConsoleCommand(String[]) should keep argument's value properly")
+                .isNotNull().isEqualTo("Some Installer.jar");
     }
 
     @Test
-    public void testConvertConsoleCommands() {
-        try {
-            // given
-            String[] commands = { "java -jar \"Some Installer.jar\"",
-                    "\"some program\" \"Client.jar\"" };
+    public void testConvertConsoleCommands() throws InvalidCommandException {
+        // given
+        String[] commands = { "java -jar \"Some Installer.jar\"", "\"some program\" \"Client.jar\"" };
 
-            // when
-            List<String[]> result = Commands.convertMultipleConsoleCommands(commands);
+        // when
+        List<String[]> result = convertMultipleConsoleCommands(commands);
 
-            // then
-            assertThat(result)
-                    .as("convertConsoleCommands(List<String[]>) should make conversion for each command")
-                    .isNotNull().hasSize(2);
-            assertThat(result.get(0))
-                    .as("convertConsoleCommands(List<String[]>) should convert each command properly")
-                    .isNotNull().hasSize(3);
-            assertThat(result.get(1))
-                    .as("convertConsoleCommands(List<String[]>) should convert each command properly")
-                    .isNotNull().hasSize(2);
-        } catch (InvalidCommandException e) {
-            fail("No exception should be thrown, when commands defined properly");
-        }
+        // then
+        assertThat(result)
+                .as("convertConsoleCommands(List<String[]>) should make conversion for each command")
+                .isNotNull().hasSize(2);
+        assertThat(result.get(0))
+                .as("convertConsoleCommands(List<String[]>) should convert each command properly")
+                .isNotNull().hasSize(3);
+        assertThat(result.get(1))
+                .as("convertConsoleCommands(List<String[]>) should convert each command properly")
+                .isNotNull().hasSize(2);
     }
 
     @Test
     public void testConvertSingleCommandList() {
         // given
-        List<String> command = new ArrayList<String>();
-        command.add("java");
-        command.add("-jar");
-        command.add("Installer.jar");
+        List<String> command = newArrayList("java", "-jar", "Installer.jar");
 
         // when
-        List<String[]> result = Commands.convertSingleCommand(command);
+        List<String[]> result = convertSingleCommand(command);
 
         // then
         assertThat(result)
@@ -110,7 +99,7 @@ public class TestCommands {
         String[] command = { "java", "-jar", "Installer.jar" };
 
         // when
-        List<String[]> result = Commands.convertSingleCommand(command);
+        List<String[]> result = convertSingleCommand(command);
 
         // then
         assertThat(result)
@@ -129,12 +118,12 @@ public class TestCommands {
     }
 
     @Test
-    public void wrapArgument() {
+    public void testWrapArgument() {
         // given
         String argument = "some \"argument\"";
 
         // when
-        String result = Commands.wrapArgument(argument);
+        String result = wrapArgument(argument);
 
         // then
         assertThat(result).as("wrapArgument(String) should properly wrap argument").isNotNull()
@@ -142,7 +131,7 @@ public class TestCommands {
     }
 
     @Test
-    public void joinArguments() {
+    public void testJoinArguments() {
         // given
         String[] arguments = { "some \"argument\"", "some other argument" };
 
