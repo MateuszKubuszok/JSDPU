@@ -1,6 +1,8 @@
 Java's System Dependent Process Utils.
 ===========
 
+[![Build Status](https://travis-ci.org/MateuszKubuszok/JSDPU.png)](https://travis-ci.org/MateuszKubuszok/JSDPU)
+
 Project of a library dedicated to performing some specific operations on
 processes, namely running them in queues as one process, running them
 with elevation or terminating existing processes.
