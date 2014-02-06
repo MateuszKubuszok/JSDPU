@@ -1,5 +1,7 @@
 language:       java
-script:         gradle build
+script:
+              - cd JSDPU
+              - gradle build
 jdk:
               - openjdk7
               - oraclejdk7
